@@ -1,4 +1,4 @@
-package com.bookshop.dao;
+package com.bookshop.domain;
 
 import java.io.Serializable;
 
