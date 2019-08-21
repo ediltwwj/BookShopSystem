@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- 整合spring和mybatis,完成自动扫描，自动注入，配置数据库等 -->
+    <context:component-scan base-package="com.bookshop">
+        <!-- 配置哪些注解不扫描 -->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!-- 引入配置文件jdbc.properties -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties"/>
+    </bean>
+    <!--<context:property-placeholder location="classpath:jdbc.properties"/>-->
+    <!--<properties resource="jdbc.properties"></properties>-->
+
+
+    <!-- 配置连接池 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!-- 初始保留连接数量 -->
+        <property name="initialPoolSize" value="${jdbc.initialPoolSize}"/>
+        <!-- 连接池中保留的连接数区间 -->
+        <property name="minPoolSize" value="${jdbc.minPoolSize}" />
+        <property name="maxPoolSize" value="${jdbc.maxPoolSize}"/>
+        <!-- 连接时长限制 -->
+        <property name="checkoutTimeout" value="${jdbc.checkoutTimeout}"/>
+        <!-- 连接关闭时默认将所有未提交的操作回滚 -->
+        <property name="autoCommitOnClose" value="${jdbc.autoCommitOnClose}"/>
+    </bean>
+
+    <!-- 配置SqlSessionFactory工厂 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 为domain中的JavaBean设置别名 -->
+        <property name="typeAliasesPackage" value="com.bookshop.domain" />
+        <!-- 扫描sql配置文件:mapper需要的xml文件,采用全注解则不需要，当使用xml的时候和dao接口位置不同时必须配 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <!-- 简单应用分页插件，mybatis和spring配置方式有差异 -->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <!-- 使用下面的方式配置参数，一行配置一个 -->
+                        <value>
+                            dialect=mysql
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!-- 配置dao接口所在的包，spring进行自动查找底下的类 -->
+    <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.bookshop.dao"/>
+        <!-- 注入sqlSessionFactory,和注解@Repository作用类似 -->
+        <!--<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />-->
+    </bean>
+
+    <!-- 配置Spring框架的声明式事务管理 -->
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!-- 配置事务通知 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!-- 传播行为 -->
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="delete*" propagation="REQUIRED"/>
+            <tx:method name="insert*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="get*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="select*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    <!-- 配置AOP增强 -->
+    <aop:config>
+        <aop:pointcut id="pt1" expression="execution(* com.bookshop.service.impl.*.*(..))"></aop:pointcut>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pt1"/>
+    </aop:config>
+</beans>

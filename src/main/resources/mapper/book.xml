@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bookshop.dao.IBookDao">
+
+    <resultMap id="bookResultMap" type="Book">
+        <!-- 只能保证Book实体封装完成 -->
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="bookType" column="bookType"/>
+        <result property="price" column="price"/>
+        <result property="originalPrice" column="originalPrice"/>
+        <result property="author" column="author"/>
+        <result property="press" column="press"/>
+        <result property="version" column="version"/>
+        <result property="degree" column="degree"/>
+        <result property="publishDate" column="publishDate"/>
+        <result property="description" column="description"/>
+        <result property="date" column="date"/>
+        <!-- property表示pojo的一个对象属性" javaType="上面pojo关联的pojo对象 -->
+        <association property="user" javaType="User">
+            <id property="uid" column="id"/>
+        </association>
+        <association property="category" javaType="Category">
+            <id property="cid" column="id"/>
+        </association>
+    </resultMap>
+
+    <!-- keyProperty用于获取自增的id -->
+    <insert id="add" useGeneratedKeys="true" keyProperty="id" parameterType="Book" >
+        insert into book
+        (name, bookType, author, cid, originalPrice, price, press, publishDate, version, degree, description, uid,date)
+        values
+        (#{name}, #{bookType}, #{author}, #{category.id}, #{originalPrice}, #{price}, #{press}, #{publishDate}, #{version}, #{degree}, #{description}, #{user.id}, #{date})
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from book where id= #{id}
+    </delete>
+
+    <select id="get" parameterType="java.lang.Integer" resultMap="bookResultMap">
+        select * from book where id= #{id}
+    </select>
+
+    <update id="update" parameterType="Book" >
+        update book set name=#{name}, cid=#{category.id}, originalPrice=#{originalPrice}, price=#{price},
+                        press=#{press}, publishDate=#{publishDate}, version=#{version}, degree=#{degree}, description=#{description} where id=#{id}
+    </update>
+
+    <select id="list" resultType="Book">
+        select * from book
+    </select>
+
+    <select id="listByBookType" resultType="Book">
+        select * from book where bookType=#{bookType} order by date desc
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(id) from book
+    </select>
+
+    <select id="getListByCategoryId" resultMap="bookResultMap">
+        select * from book where cid = #{cid} and bookType = #{bookType} order by date desc
+        <if test="start != -1">
+            limit #{start},#{count}
+        </if>
+    </select>
+
+    <select id="getListByUserId" resultType="Book">
+        select * from book where uid = #{uid} and bookType = #{bookType} order by date desc
+    </select>
+
+    <select id="getUserId" resultType="java.lang.Integer">
+        select uid from book where id = #{id}
+    </select>
+
+</mapper>
