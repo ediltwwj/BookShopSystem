@@ -29,9 +29,9 @@ public interface ICategoryDao {
 
     // 获取所有Category
     @Select("select * from category")
-    List<Category> list();
+    List<Category> getList();
 
     // 获取类别总数
     @Select("select count(id) from category")
-    Integer count();
+    Integer getCount();
 }

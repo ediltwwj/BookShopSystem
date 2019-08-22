@@ -2,10 +2,13 @@ package com.bookshop.dao;
 
 import com.bookshop.domain.Book;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 // 针对一对一，注解写法太过于复杂，因此采用xml方式实现注入
+// 要使用一对一，一对多，感觉没有XML清晰好写
+@Repository
 public interface IBookDao {
 
     /**
@@ -16,8 +19,8 @@ public interface IBookDao {
      * @param cid CategoryId
      * @return 符合条件的List
      */
-    List<Book> getListByCategoryId(@Param("start") int start, @Param("count") int count,
-                                            @Param("bookType") int bookType, @Param("cid") int cid);
+    List<Book> getListByCategoryId(@Param("start") Integer start, @Param("count") Integer count,
+                                            @Param("bookType") Integer bookType, @Param("cid") Integer cid);
 
     /**
      * 根据图书Id获取上传者Id
@@ -33,7 +36,7 @@ public interface IBookDao {
     void update(Book book);
 
     // 计算图书的总数
-    Integer count();
+    Integer getCount();
 
     // 删除图书
     void delete(Integer id);
@@ -42,10 +45,10 @@ public interface IBookDao {
     Book get(Integer id);
 
     // 获取所有图书并放入List
-    List<Book> list();
+    List<Book> getList();
 
     // 根据书的类型（图书信息1/求书信息0）获取所有图书
-    List<Book> listByBookType(int bookType);
+    List<Book> getListByBookType(Integer bookType);
 
     /**
      * 根据条件获取所有图书
@@ -53,5 +56,5 @@ public interface IBookDao {
      * @param bookType 书的类型（图书信息1/求书信息0）
      * @return 相应的List
      */
-    List<Book> getListByUserId(@Param("uid") int uid, @Param("bookType") int bookType);
+    List<Book> getListByUserId(@Param("uid") Integer uid, @Param("bookType") Integer bookType);
 }

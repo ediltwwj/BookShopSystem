@@ -21,10 +21,18 @@
         <result property="date" column="date"/>
         <!-- property表示pojo的一个对象属性" javaType="上面pojo关联的pojo对象 -->
         <association property="user" javaType="User">
-            <id property="uid" column="id"/>
+            <id property="id" column="uid"/>
+            <result property="studentid" column="studentid"/>
+            <result property="name" column="uname"/>
+            <result property="password" column="password"/>
+            <result property="sex" column="sex"/>
+            <result property="tel" column="tel"/>
+            <result property="address" column="address"/>
+            <result property="major" column="major"/>
         </association>
         <association property="category" javaType="Category">
-            <id property="cid" column="id"/>
+            <id property="id" column="cid"/>
+            <result property="name" column="cname"/>
         </association>
     </resultMap>
 
@@ -41,7 +49,11 @@
     </delete>
 
     <select id="get" parameterType="java.lang.Integer" resultMap="bookResultMap">
-        select * from book where id= #{id}
+        select b.*, u.major, u.address, u.name uname, u.password, u.sex, u.tel, u.studentid, c.name cname from book b
+          left join
+          user u on b.uid = u.id
+          left join
+          category c on b.cid = c.id  where b.id = #{id}
     </select>
 
     <update id="update" parameterType="Book" >
@@ -49,20 +61,25 @@
                         press=#{press}, publishDate=#{publishDate}, version=#{version}, degree=#{degree}, description=#{description} where id=#{id}
     </update>
 
-    <select id="list" resultType="Book">
+    <select id="getList" resultType="Book">
         select * from book
     </select>
 
-    <select id="listByBookType" resultType="Book">
+    <select id="getListByBookType" resultType="Book">
         select * from book where bookType=#{bookType} order by date desc
     </select>
 
-    <select id="count" resultType="java.lang.Integer">
+    <select id="getCount" resultType="java.lang.Integer">
         select count(id) from book
     </select>
 
-    <select id="getListByCategoryId" resultMap="bookResultMap">
-        select * from book where cid = #{cid} and bookType = #{bookType} order by date desc
+    <!-- 面对多个参数，在Service中使用了@Param注解，所以这里不需要ParameterType -->
+    <select id="getListByCategoryId"  resultMap="bookResultMap">
+    <!-- 这种写法感觉有待改进 -->
+        select b.*, u.major, u.address, u.name uname, u.password, u.sex, u.tel, u.studentid, c.name cname
+         from book b , user u, category c
+          where b.bookType = #{bookType} and b.cid = #{cid}
+            and b.uid = u.id and b.cid = c.id order by b.date desc
         <if test="start != -1">
             limit #{start},#{count}
         </if>
