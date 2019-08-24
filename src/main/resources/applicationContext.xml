@@ -50,7 +50,7 @@
         <!-- 为domain中的JavaBean设置别名 -->
         <property name="typeAliasesPackage" value="com.bookshop.domain" />
         <!-- 扫描sql配置文件:mapper需要的xml文件,采用全注解则不需要，当使用xml的时候和dao接口位置不同时必须配 -->
-        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <property name="mapperLocations" value="classpath:mapper/book.xml"/>
         <!-- 简单应用分页插件，mybatis和spring配置方式有差异 -->
         <property name="plugins">
             <array>
@@ -58,7 +58,8 @@
                     <property name="properties">
                         <!-- 使用下面的方式配置参数，一行配置一个 -->
                         <value>
-
+                            <!--dialect=mysql-->
+                            helperDialect=mysql
                         </value>
                     </property>
                 </bean>

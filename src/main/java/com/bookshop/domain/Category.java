@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class Category implements Serializable {
 
-    private Integer id;
+    private Integer id = 0;
     private String name;
 
     public Integer getId() {

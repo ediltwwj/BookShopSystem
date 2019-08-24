@@ -74,7 +74,7 @@
     </select>
 
     <!-- 面对多个参数，在Service中使用了@Param注解，所以这里不需要ParameterType -->
-    <select id="getListByCategoryId"  resultMap="bookResultMap">
+    <select id="getListByCategoryId" resultMap="bookResultMap">
     <!-- 这种写法感觉有待改进 -->
         select b.*, u.major, u.address, u.name uname, u.password, u.sex, u.tel, u.studentid, c.name cname
          from book b , user u, category c

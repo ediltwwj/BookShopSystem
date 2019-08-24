@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8" import="java.util.*" %>
+         pageEncoding="UTF-8" import="java.util.*" isELIgnored="false" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
@@ -11,7 +11,7 @@
     <!-- 导航 -->
     <nav class="navbar">
         <div class="nav-info">
-            <a href="#" class="username">${user.getName()}</a>
+            <a href="#" class="username">${user.getName()}/></a>
             <a href="/myBookshelf.do" class="bookshelf">||&nbsp;&nbsp;&nbsp;我的书架</a>
             <a href="#" class="logout">[ 退 出 ]</a>
         </div> <!-- nav-info -->
@@ -57,6 +57,9 @@
             </div>
         </div><!-- 	slider -->
     </div><!-- carousel -->
+
+
+    <%--<%=request.getSession().getAttribute("user") %>--%>
 
     <!-- 图书分类 -->
     <div id="container">

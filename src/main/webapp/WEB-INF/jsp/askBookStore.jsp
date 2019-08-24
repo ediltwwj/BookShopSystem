@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8" import="java.util.*" %>
+         pageEncoding="UTF-8" import="java.util.*" isELIgnored="false" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>搜索结果</title>
+    <title>求书区</title>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/book.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
 <header>
     <nav class="navbar">
         <div class="nav-info">
-            <a href="#" class="username">chiemin</a>
+            <a href="#" class="username">${user.getName()}</a>
             <a href="/myBookshelf.do" class="bookshelf">||&nbsp;&nbsp;&nbsp;我的书架</a>
             <a href="#" class="logout">[ 退 出 ]</a>
         </div> <!-- nav-info -->
@@ -29,7 +29,7 @@
         <ul class="menu">
             <li><a href="/home.do">首页</a></li>
             <li><a href="/goBookStore.do">书籍良品</a></li>
-            <li><a href="/goAskBookStore.do">求书区</a></li>
+            <li><a class="active" href="/goAskBookStore.do">求书区</a></li>
             <li><a href="#">服务区</a></li>
         </ul>
     </nav>
@@ -38,9 +38,9 @@
 <!-- 图书分类 -->
 <div id="container">
     <div id="book-container">
-        <h3 class="book-title"><a href="#">| 所有搜索结果</a></h3>
+        <h3 class="book-title"><a href="#">| 所有求书信息</a></h3>
         <ul class="book-lists">
-            <c:forEach items="${books}" var="book" varStatus="bookStatus">
+            <c:forEach items="${books}" var="book" varStatus="bookStatus"> <!-- 不知道怎么遍历items -->
             <li class="book-list">
                 <a href="bookDetail.do?id=${book.getId()}" class="book-pic" target="_blank">
                     <img src="<%=request.getContextPath()%>/img/book-list/article/${book.getBookImage().getId()}.jpg">

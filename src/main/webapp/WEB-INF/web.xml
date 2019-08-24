@@ -5,6 +5,27 @@
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
 
+  <!-- 配置Spring的监听器,默认只加载WEB-INF目录下的applicationContext.xml配置文件 -->
+  <!-- 可以使SpringMvc直接使用Spring管理的bean -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <!-- 设置配置文件的路径 -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+
+  <!-- 使得浏览器也支持HEAD、OPTIONS等请求方式,且必须在前端控制器前配置 -->
+  <filter>
+    <filter-name>HiddenHttpMethodFilter</filter-name>
+    <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>HiddenHttpMethodFilter</filter-name>
+    <servlet-name>dispatcherServlet</servlet-name>
+  </filter-mapping>
+
   <!-- 前端控制器 -->
   <servlet>
     <servlet-name>dispatcherServlet</servlet-name>
@@ -36,4 +57,13 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <!-- 指定欢迎页面 -->
+  <welcome-file-list>
+    <welcome-file>./WEB-INF/jsp/login.jsp</welcome-file>
+  </welcome-file-list>
+
+  <!-- 会话超时配置，单位分钟 -->
+  <session-config>
+    <session-timeout>360</session-timeout>
+  </session-config>
 </web-app>
